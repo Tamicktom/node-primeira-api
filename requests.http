@@ -9,3 +9,6 @@ Content-Type: application/json
   "name": "John Doe",
   "email": "john.doe@example.com"
 }
+
+###
+GET http://localhost:3333/courses
