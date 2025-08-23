@@ -2,7 +2,9 @@
 import fastify from 'fastify';
 import crypto from 'node:crypto';
 
-const app = fastify();
+const app = fastify({
+  logger: true, //* Enable logging
+});
 
 app.get('/', (req, res) => {
   res.send('Hello World');
