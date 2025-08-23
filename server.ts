@@ -1,4 +1,6 @@
-const fastify = require('fastify');
+//* Libraries imports
+import fastify from 'fastify';
+import crypto from 'node:crypto';
 
 const app = fastify();
 
