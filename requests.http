@@ -12,3 +12,15 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3333/courses
+
+###
+POST http://localhost:3333/courses
+Content-Type: application/json
+
+{
+  "title": "Deno",
+  "description": "Deno is a runtime for JavaScript and TypeScript."
+}
+
+###
+GET http://localhost:3333/courses/43e6f7d8-eeb9-482e-bfd0-ae53edd7c636

@@ -25,8 +25,16 @@ app.get('/', (req, res) => {
 });
 
 app.get("/courses", async (req, res) => {
-  const courses = await db.select().from(coursesTable);
-  res.send(courses);
+  const result = await db
+    .select({
+      id: coursesTable.id,
+      title: coursesTable.title,
+    })
+    .from(coursesTable)
+    .orderBy(coursesTable.createdAt)
+    .limit(10);
+
+  res.send(result);
 });
 
 app.get("/courses/:id", async (req, res) => {
@@ -38,6 +46,21 @@ app.get("/courses/:id", async (req, res) => {
   };
 
   return res.status(404).send({ message: 'Course not found' });
+});
+
+app.post("/courses", async (req, res) => {
+  const { title, description } = req.body as { title: string, description: string };
+  const result = await db
+    .insert(coursesTable)
+    .values({
+      title,
+      description,
+    })
+    .returning({
+      id: coursesTable.id,
+    })
+
+  return res.status(201).send(result[0]);
 });
 
 app.listen({ port: 3333 }, (err, address) => {
