@@ -3,10 +3,19 @@ import fastify from 'fastify';
 import crypto from 'node:crypto';
 
 const app = fastify({
-  logger: true, //* Enable logging
+  logger: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname'
+      }
+    }
+  }
 });
 
 app.get('/', (req, res) => {
+  console.log(req.ip);
   res.send('Hello World');
 });
 
