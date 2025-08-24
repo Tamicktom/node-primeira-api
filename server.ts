@@ -1,7 +1,8 @@
 //* Libraries imports
 import fastify from 'fastify';
-import crypto from 'node:crypto';
 import { eq } from 'drizzle-orm';
+import { validatorCompiler, serializerCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from 'zod';
 
 //* Local imports
 import { db } from './src/database/client.ts';
@@ -17,51 +18,75 @@ const app = fastify({
       }
     }
   }
-});
+}).withTypeProvider<ZodTypeProvider>();
+
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
 app.get('/', (req, res) => {
   console.log(req.ip);
   res.send('Hello World');
 });
 
-app.get("/courses", async (req, res) => {
-  const result = await db
-    .select({
-      id: coursesTable.id,
-      title: coursesTable.title,
-    })
-    .from(coursesTable)
-    .orderBy(coursesTable.createdAt)
-    .limit(10);
+app.get(
+  "/courses",
+  async (req, res) => {
+    const result = await db
+      .select({
+        id: coursesTable.id,
+        title: coursesTable.title,
+      })
+      .from(coursesTable)
+      .orderBy(coursesTable.createdAt)
+      .limit(10);
 
-  res.send(result);
-});
+    res.send(result);
+  }
+);
 
-app.get("/courses/:id", async (req, res) => {
-  const { id } = req.params as { id: string };
-  const result = await db.select().from(coursesTable).where(eq(coursesTable.id, id));
+app.get(
+  "/courses/:id",
+  {
+    schema: {
+      params: z.object({
+        id: z.uuid(),
+      })
+    }
+  },
+  async (req, res) => {
+    const result = await db.select().from(coursesTable).where(eq(coursesTable.id, req.params.id));
 
-  if (result.length > 0) {
-    return res.send(result[0]);
-  };
+    if (result.length > 0) {
+      return res.send(result[0]);
+    };
 
-  return res.status(404).send({ message: 'Course not found' });
-});
+    return res.status(404).send({ message: 'Course not found' });
+  }
+);
 
-app.post("/courses", async (req, res) => {
-  const { title, description } = req.body as { title: string, description: string };
-  const result = await db
-    .insert(coursesTable)
-    .values({
-      title,
-      description,
-    })
-    .returning({
-      id: coursesTable.id,
-    })
+app.post(
+  "/courses",
+  {
+    schema: {
+      body: z.object({
+        title: z.string(),
+        description: z.string(),
+      })
+    }
+  }, async (req, res) => {
+    const result = await db
+      .insert(coursesTable)
+      .values({
+        title: req.body.title,
+        description: req.body.description,
+      })
+      .returning({
+        id: coursesTable.id,
+      })
 
-  return res.status(201).send(result[0]);
-});
+    return res.status(201).send(result[0]);
+  }
+);
 
 app.listen({ port: 3333 }, (err, address) => {
   if (err) {
