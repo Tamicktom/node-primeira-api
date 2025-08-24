@@ -2,7 +2,7 @@
 import fastify from 'fastify';
 import { validatorCompiler, serializerCompiler, type ZodTypeProvider, jsonSchemaTransform } from "fastify-type-provider-zod";
 import { fastifySwagger } from "@fastify/swagger";
-import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import fastifyScalar from "@scalar/fastify-api-reference";
 
 //* Routes imports
 import { getCourses } from './src/routes/get-courses.ts';
@@ -31,9 +31,9 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
-app.register(fastifySwaggerUi, {
+app.register(fastifyScalar, {
   routePrefix: "/swagger",
-});
+})
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
