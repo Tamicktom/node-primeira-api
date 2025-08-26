@@ -1,6 +1,6 @@
 //* Libraries imports
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { asc, desc, ilike, or } from "drizzle-orm";
+import { asc, desc, ilike, or, type SQL } from "drizzle-orm";
 import { z } from "zod";
 
 //* Local imports
@@ -36,28 +36,34 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
 
       const orderBy = req.query.orderBy === "createdAt" ? coursesTable.createdAt : coursesTable.title;
       const order = req.query.order === "asc" ? asc : desc;
+      const conditions: SQL[] = [];
 
-      const result = await db
-        .select({
-          id: coursesTable.id,
-          title: coursesTable.title,
-        })
-        .from(coursesTable)
-        .where(
-          or(
-            ilike(coursesTable.title, `%${req.query.search}%`),
-            ilike(coursesTable.description, `%${req.query.search}%`),
-          )
-        )
-        .orderBy(order(orderBy))
-        .limit(req.query.limit)
-        .offset(req.query.offset);
-
-      const total = await db
-        .$count(coursesTable, or(
+      if (req.query.search) {
+        conditions.push(
           ilike(coursesTable.title, `%${req.query.search}%`),
           ilike(coursesTable.description, `%${req.query.search}%`),
-        ));
+        );
+      }
+
+      const [result, total] = await Promise.all([
+        //* Get courses
+        db
+          .select({
+            id: coursesTable.id,
+            title: coursesTable.title,
+          })
+          .from(coursesTable)
+          .where(
+            or(...conditions)
+          )
+          .orderBy(order(orderBy))
+          .limit(req.query.limit)
+          .offset(req.query.offset),
+
+        //* Get total number of courses
+        db
+          .$count(coursesTable, or(...conditions))
+      ]);
 
       res.send({
         data: result,
