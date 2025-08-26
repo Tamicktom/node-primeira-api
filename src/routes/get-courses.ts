@@ -22,10 +22,13 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
           order: z.enum(["asc", "desc"]).default("asc").describe("Order direction"),
         }),
         response: {
-          200: z.array(z.object({
-            id: z.uuid().describe("The id of the course"),
-            title: z.string().describe("The title of the course"),
-          })),
+          200: z.object({
+            data: z.array(z.object({
+              id: z.uuid().describe("The id of the course"),
+              title: z.string().describe("The title of the course"),
+            })),
+            total: z.number().describe("The total number of results"),
+          }),
         }
       }
     },
@@ -50,7 +53,16 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
         .limit(req.query.limit)
         .offset(req.query.offset);
 
-      res.send(result);
+      const total = await db
+        .$count(coursesTable, or(
+          ilike(coursesTable.title, `%${req.query.search}%`),
+          ilike(coursesTable.description, `%${req.query.search}%`),
+        ));
+
+      res.send({
+        data: result,
+        total,
+      });
     }
   );
 };
