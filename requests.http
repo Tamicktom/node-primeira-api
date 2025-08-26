@@ -18,8 +18,8 @@ POST http://localhost:3333/courses
 Content-Type: application/json
 
 {
-  "title": "Deno",
-  "description": "Deno is a runtime for JavaScript and TypeScript."
+  "title": "Curso de React Native",
+  "description": ""
 }
 
 ###

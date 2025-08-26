@@ -1,5 +1,6 @@
 //* Libraries imports
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { ilike, or } from "drizzle-orm";
 import { z } from "zod";
 
 //* Local imports
@@ -13,6 +14,11 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["courses"],
         summary: "Get all courses",
+        querystring: z.object({
+          search: z.string().default(""),
+          limit: z.coerce.number().default(10),
+          offset: z.coerce.number().default(0),
+        }),
         response: {
           200: z.array(z.object({
             id: z.uuid().describe("The id of the course"),
@@ -28,8 +34,15 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
           title: coursesTable.title,
         })
         .from(coursesTable)
+        .where(
+          or(
+            ilike(coursesTable.title, `%${req.query.search}%`),
+            ilike(coursesTable.description, `%${req.query.search}%`),
+          )
+        )
         .orderBy(coursesTable.createdAt)
-        .limit(10);
+        .limit(req.query.limit)
+        .offset(req.query.offset);
 
       res.send(result);
     }
