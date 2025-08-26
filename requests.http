@@ -11,7 +11,8 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3333/courses
+GET http://localhost:3333/courses?search=React&limit=10&offset=0
+Content-Type: application/json
 
 ###
 POST http://localhost:3333/courses

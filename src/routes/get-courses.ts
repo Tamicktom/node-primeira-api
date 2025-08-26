@@ -1,6 +1,6 @@
 //* Libraries imports
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { ilike, or } from "drizzle-orm";
+import { asc, desc, ilike, or } from "drizzle-orm";
 import { z } from "zod";
 
 //* Local imports
@@ -15,9 +15,11 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
         tags: ["courses"],
         summary: "Get all courses",
         querystring: z.object({
-          search: z.string().default(""),
-          limit: z.coerce.number().default(10),
-          offset: z.coerce.number().default(0),
+          search: z.string().default("").describe("Search query"),
+          limit: z.coerce.number().default(10).describe("Limit of results"),
+          offset: z.coerce.number().default(0).describe("Offset of results"),
+          orderBy: z.enum(["title", "createdAt"]).default("createdAt").describe("Field to order by"),
+          order: z.enum(["asc", "desc"]).default("asc").describe("Order direction"),
         }),
         response: {
           200: z.array(z.object({
@@ -28,6 +30,10 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
       }
     },
     async (req, res) => {
+
+      const orderBy = req.query.orderBy === "createdAt" ? coursesTable.createdAt : coursesTable.title;
+      const order = req.query.order === "asc" ? asc : desc;
+
       const result = await db
         .select({
           id: coursesTable.id,
@@ -40,7 +46,7 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
             ilike(coursesTable.description, `%${req.query.search}%`),
           )
         )
-        .orderBy(coursesTable.createdAt)
+        .orderBy(order(orderBy))
         .limit(req.query.limit)
         .offset(req.query.offset);
 
