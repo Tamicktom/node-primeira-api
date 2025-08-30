@@ -7,6 +7,7 @@ import request from "supertest";
 import { app } from "../app.ts";
 
 describe("create an course with valid data", async () => {
+
   it("should create an course with valid data", async () => {
     await app.ready();
 
@@ -28,4 +29,5 @@ describe("create an course with valid data", async () => {
 
     await app.close();
   });
+
 });

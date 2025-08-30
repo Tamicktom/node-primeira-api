@@ -37,11 +37,11 @@ export const getCourseById: FastifyPluginAsyncZod = async (app) => {
           eq(coursesTable.id, req.params.id)
         );
 
-      if (result.length > 0) {
-        return res.send(result[0]);
+      if (result.length === 0) {
+        return res.status(404).send({ message: 'Course not found' });
       };
 
-      return res.status(404).send({ message: 'Course not found' });
+      return res.send(result[0]);
     }
   );
 };

@@ -7,10 +7,11 @@ import { fakerPT_BR as faker } from "@faker-js/faker";
 import { app } from "../app.ts";
 
 describe("get a course by id", async () => {
+  
   it("should get a course by id", async () => {
-    // first create a course
     await app.ready();
 
+    // first create a course
     const title = faker.lorem.sentence();
     const description = faker.lorem.paragraph();
 
@@ -36,4 +37,19 @@ describe("get a course by id", async () => {
 
     await app.close();
   });
+
+  it("should return 404 if the course does not exist", async () => {
+    await app.ready();
+
+    const url = `/courses/123`;
+    const getCourseByIdResponse = await request(app.server)
+      .get(url)
+      .set("Content-Type", "application/json");
+
+    expect(getCourseByIdResponse.status).toBe(404);
+    expect(getCourseByIdResponse.body.message).toBe("Course not found");
+
+    await app.close();
+  });
+
 });
