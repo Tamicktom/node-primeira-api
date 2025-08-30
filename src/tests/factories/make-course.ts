@@ -1,5 +1,6 @@
 //* Libraries imports
 import { fakerPT_BR as faker } from "@faker-js/faker";
+import { randomUUID } from "node:crypto";
 
 //* Local imports
 import { db } from "../../database/client.ts";
@@ -10,7 +11,7 @@ export async function makeCourses(amount: number = 1) {
   const courses = [];
 
   for (let i = 0; i < amount; i++) {
-    const title = faker.lorem.sentence();
+    const title = faker.lorem.sentence(3) + randomUUID(); //* Add a random UUID to the title to avoid duplicates
     const description = faker.lorem.paragraph();
 
     const [course] = await db
