@@ -4,11 +4,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "dotenv -e .env vitest run",
+    "test": "dotenv -e .env.test vitest run",
     "pretest": "dotenv -e .env.test drizzle-kit migrate",
     "start": "node src/server.js",
     "dev": "node --watch --env-file .env --experimental-strip-types src/server.ts",
-    "db:seed": "node --env-file .env --experimental-strip-types src/database/seed.ts"
+    "db:seed": "node --env-file .env --experimental-strip-types src/database/seed.ts",
+    "db:migrate": "drizzle-kit migrate && dotenv -e .env.test drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
