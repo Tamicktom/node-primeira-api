@@ -20,6 +20,8 @@ export const createCourse: FastifyPluginAsyncZod = async (app) => {
         response: {
           201: z.object({
             id: z.uuid().describe("The id of the course"),
+            title: z.string().describe("The title of the course"),
+            description: z.string().describe("The description of the course"),
           }),
         }
       }
@@ -32,6 +34,8 @@ export const createCourse: FastifyPluginAsyncZod = async (app) => {
         })
         .returning({
           id: coursesTable.id,
+          title: coursesTable.title,
+          description: coursesTable.description,
         })
 
       return res.status(201).send(result[0]);

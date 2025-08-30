@@ -4,9 +4,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "node --watch --env-file .env --experimental-strip-types server.ts",
+    "test": "dotenv -e .env vitest run",
+    "pretest": "dotenv -e .env.test drizzle-kit migrate",
+    "start": "node src/server.js",
+    "dev": "node --watch --env-file .env --experimental-strip-types src/server.ts",
     "db:seed": "node --env-file .env --experimental-strip-types src/database/seed.ts"
   },
   "keywords": [],
@@ -26,7 +27,11 @@
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
     "@types/node": "^24.3.0",
+    "@types/supertest": "^6.0.3",
+    "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.4",
-    "typescript": "^5.9.2"
+    "supertest": "^7.1.4",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }
