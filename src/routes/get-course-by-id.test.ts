@@ -14,6 +14,7 @@ describe("get a course by id", async () => {
     const title = faker.lorem.sentence();
     const description = faker.lorem.paragraph();
 
+    //* Create a course
     const createCourseResponse = await request(app.server)
       .post("/courses")
       .set("Content-Type", "application/json")
@@ -21,10 +22,11 @@ describe("get a course by id", async () => {
         title,
         description,
       });
-      
-    // then get the course by id
+
+    //* Get the course by id
+    const url = `/courses/${createCourseResponse.body.id}`;
     const getCourseByIdResponse = await request(app.server)
-      .get(`/courses/${createCourseResponse.body.id}`)
+      .get(url)
       .set("Content-Type", "application/json");
 
     expect(getCourseByIdResponse.status).toBe(200);
