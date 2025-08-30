@@ -8,7 +8,7 @@ import { makeCourses } from "./factories/make-course.ts";
 
 describe("get all courses", async () => {
 
-  it("should get all courses", async () => {
+  it("should get all courses with search", async () => {
     await app.ready();
 
     const courses = await makeCourses(3);
@@ -23,6 +23,8 @@ describe("get all courses", async () => {
       expect(getCoursesResponse.body.data.length).toBe(1);
       expect(getCoursesResponse.body.data[0].id).toBe(course.id);
       expect(getCoursesResponse.body.data[0].title).toBe(course.title);
+      expect(getCoursesResponse.body.data[0].enrolled).toBe(0);
+      expect(getCoursesResponse.body.total).toBe(1);
     }));
 
     await app.close();
