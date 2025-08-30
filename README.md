@@ -45,7 +45,12 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/myapp
 
 ### 5. Execute as migrações do banco
 ```bash
-npx drizzle-kit migrate
+npm run db:migrate
+```
+
+### 6. (Opcional) Popular o banco de desenvolvimento com dados de exemplo
+```bash
+npm run db:seed
 ```
 
 ## ▶️ Executando o Projeto
@@ -149,6 +154,42 @@ O projeto inclui um arquivo `requests.http` com exemplos de requisições que vo
    GET http://localhost:3333/courses/43e6f7d8-eeb9-482e-bfd0-ae53edd7c636
    ```
 
+## ✅ Testes automatizados
+
+Os testes são escritos com Vitest e Supertest, executados contra um banco de dados de teste.
+
+### 1. Configurar o ambiente de teste
+- Crie um arquivo `.env.test` na raiz do projeto com a URL do banco de teste (o `docker/setup.sql` já cria o banco `myapptest` automaticamente):
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/myapptest
+```
+- Garanta que o PostgreSQL está rodando via Docker:
+```bash
+docker-compose up -d
+```
+
+### 2. Executar os testes (com cobertura)
+```bash
+npm test
+```
+O comando acima irá:
+- aplicar as migrações no banco de teste automaticamente (script `pretest`)
+- executar os testes com cobertura (Vitest + cobertura V8)
+
+### 3. Relatórios de cobertura
+- Resumo no terminal após a execução
+- Relatório HTML em `coverage/index.html`
+
+### 4. Dicas úteis
+- Rodar em modo watch (interativo):
+```bash
+dotenv -e .env.test vitest
+```
+- Rodar um arquivo de teste específico:
+```bash
+dotenv -e .env.test vitest run src/tests/get-courses.test.ts
+```
+
 ## 📁 Estrutura do Projeto
 
 ```
@@ -174,7 +215,9 @@ node-primeira-api/
 
 - `npm run dev` - Inicia o servidor em modo de desenvolvimento com hot-reload
 - `npm start` - Inicia o servidor em modo de produção
-- `npm test` - Executa os testes (ainda não implementado)
+- `npm test` - Executa os testes com cobertura (usa `.env.test` e migra antes)
+- `npm run db:migrate` - Executa migrações em dev e também no ambiente de teste
+- `npm run db:seed` - Popula o banco de desenvolvimento com dados iniciais
 
 ## 📈 Próximos Passos
 
@@ -182,7 +225,6 @@ Este projeto é uma base sólida para desenvolvimento de APIs. Possíveis melhor
 
 - Implementação de autenticação e autorização
 - Validação mais robusta dos dados
-- Implementação de testes automatizados
 - Adição de mais endpoints (atualização e exclusão de cursos)
 - Implementação de paginação
 - Adição de filtros e busca
