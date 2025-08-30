@@ -7,9 +7,9 @@ export default defineConfig({
       enabled: true,
       provider: "v8",
       reporter: ["text", "html", "text-summary"],
+      all: true,
       include: ["src/**/*.test.ts"],
       exclude: ["**/*.test.ts", "src/tests/**"],
-      all: true,
     },
   },
 });
