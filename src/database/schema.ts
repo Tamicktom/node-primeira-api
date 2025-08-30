@@ -6,6 +6,7 @@ import {
   integer,
   date,
   primaryKey,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
@@ -34,4 +35,5 @@ export const enrollmentsTable = pgTable("enrollments", {
   updatedAt: date().notNull().defaultNow(),
 }, (table) => [
   primaryKey({ columns: [table.userId, table.courseId] }),
+  uniqueIndex("enrollments_unique_index").on(table.userId, table.courseId),
 ]);
