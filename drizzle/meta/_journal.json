@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1755988371574,
-      "tag": "0000_unusual_warpath",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1755988711166,
-      "tag": "0001_wet_wrecker",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1756550625872,
-      "tag": "0002_fearless_madripoor",
+      "when": 1756560743884,
+      "tag": "0000_colorful_namor",
       "breakpoints": true
     }
   ]

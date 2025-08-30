@@ -1,11 +1,11 @@
 //* Libraries imports
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { asc, desc, ilike, or, type SQL } from "drizzle-orm";
+import { asc, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
 import { z } from "zod";
 
 //* Local imports
 import { db } from "../database/client.ts";
-import { coursesTable } from "../database/schema.ts";
+import { coursesTable, enrollmentsTable } from "../database/schema.ts";
 
 export const getCourses: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -26,6 +26,7 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
             data: z.array(z.object({
               id: z.uuid().describe("The id of the course"),
               title: z.string().describe("The title of the course"),
+              enrolled: z.number().describe("The number of users enrolled in the course"),
             })),
             total: z.number().describe("The total number of results"),
           }),
@@ -46,23 +47,24 @@ export const getCourses: FastifyPluginAsyncZod = async (app) => {
       }
 
       const [result, total] = await Promise.all([
-        //* Get courses
-        db
-          .select({
-            id: coursesTable.id,
-            title: coursesTable.title,
-          })
+        //* Get courses with enrolled status
+        db.select({
+          id: coursesTable.id,
+          title: coursesTable.title,
+          enrolled: count(enrollmentsTable.courseId),
+        })
           .from(coursesTable)
+          .leftJoin(enrollmentsTable, eq(enrollmentsTable.courseId, coursesTable.id))
           .where(
             or(...conditions)
           )
           .orderBy(order(orderBy))
           .limit(req.query.limit)
-          .offset(req.query.offset),
+          .offset(req.query.offset)
+          .groupBy(coursesTable.id),
 
         //* Get total number of courses
-        db
-          .$count(coursesTable, or(...conditions))
+        db.$count(coursesTable, or(...conditions))
       ]);
 
       res.send({
