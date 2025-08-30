@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "node --watch --env-file .env --experimental-strip-types server.ts"
+    "dev": "node --watch --env-file .env --experimental-strip-types server.ts",
+    "db:seed": "node --env-file .env --experimental-strip-types src/database/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,7 @@
     "zod": "^4.1.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
     "@types/node": "^24.3.0",
     "drizzle-kit": "^0.31.4",
     "typescript": "^5.9.2"

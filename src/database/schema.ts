@@ -5,6 +5,7 @@ import {
   text,
   integer,
   date,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
@@ -24,3 +25,13 @@ export const coursesTable = pgTable("courses", {
   createdAt: date().notNull().defaultNow(),
   updatedAt: date().notNull().defaultNow(),
 });
+
+export const enrollmentsTable = pgTable("enrollments", {
+  userId: uuid().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  courseId: uuid().notNull().references(() => coursesTable.id, { onDelete: "cascade" }),
+
+  createdAt: date().notNull().defaultNow(),
+  updatedAt: date().notNull().defaultNow(),
+}, (table) => [
+  primaryKey({ columns: [table.userId, table.courseId] }),
+]);

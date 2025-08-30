@@ -15,6 +15,13 @@
       "when": 1755988711166,
       "tag": "0001_wet_wrecker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756550625872,
+      "tag": "0002_fearless_madripoor",
+      "breakpoints": true
     }
   ]
 }
