@@ -21,6 +21,7 @@ export const getCourseById: FastifyPluginAsyncZod = async (app) => {
           200: z.object({
             id: z.uuid().describe("The id of the course"),
             title: z.string().describe("The title of the course"),
+            description: z.string().describe("The description of the course"),
           }),
           404: z.object({
             message: z.string().describe("The message of the error"),
