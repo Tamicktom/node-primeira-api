@@ -7,7 +7,6 @@ import { z } from "zod";
 import { db } from "../database/client.ts";
 import { coursesTable } from "../database/schema.ts";
 import { checkRequestJwt } from "./hooks/check-request-jwt.ts";
-import { getAuthenticatedUserFromRequest } from "../utils/get-authenticated-user-from-request.ts";
 
 export const getCourseById: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -33,10 +32,6 @@ export const getCourseById: FastifyPluginAsyncZod = async (app) => {
       }
     },
     async (req, res) => {
-      const user = getAuthenticatedUserFromRequest(req);
-
-      console.log(user);
-
       const result = await db
         .select()
         .from(coursesTable)

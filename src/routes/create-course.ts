@@ -2,6 +2,10 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 
+//* Hooks imports
+import { checkRequestJwt } from "./hooks/check-request-jwt.ts";
+import { checkUserRole } from "./hooks/check-user-role.ts";
+
 //* Local imports
 import { db } from "../database/client.ts";
 import { coursesTable } from "../database/schema.ts";
@@ -10,6 +14,7 @@ export const createCourse: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/courses",
     {
+      preHandler: [checkRequestJwt, checkUserRole(["admin"])],
       schema: {
         tags: ["courses"],
         summary: "Create a new course",
@@ -25,7 +30,8 @@ export const createCourse: FastifyPluginAsyncZod = async (app) => {
           }),
         }
       }
-    }, async (req, res) => {
+    },
+    async (req, res) => {
       const result = await db
         .insert(coursesTable)
         .values({
