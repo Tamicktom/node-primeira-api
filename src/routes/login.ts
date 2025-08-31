@@ -2,7 +2,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { eq } from "drizzle-orm";
 import { verify } from "argon2";
-import { sign } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { z } from "zod";
 
 //* Local imports
@@ -50,7 +50,7 @@ export const loginRoute: FastifyPluginAsyncZod = async (server) => {
         return reply.status(401).send({ message: "Invalid credentials" });
       }
 
-      const token = sign(
+      const token = jwt.sign(
         {
           sub: user.id,
           role: user.role,
