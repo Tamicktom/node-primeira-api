@@ -1,5 +1,6 @@
 //* Libraries imports
 import { fakerPT_BR as faker } from "@faker-js/faker";
+import { hash } from "argon2";
 
 //* Local imports
 import { db } from "./client.ts";
@@ -8,32 +9,34 @@ import { usersTable, coursesTable, enrollmentsTable } from "./schema.ts";
 const USER_COUNT = 100;
 const COURSE_COUNT = 10;
 
-function generateUsers(): { name: string, email: string, password: string, role: "student" | "admin" }[] {
-  return Array.from({ length: USER_COUNT }, () => {
+async function generateUsers() {
+  return await Promise.all(Array.from({ length: USER_COUNT }, async () => {
     return {
       name: faker.person.fullName(),
       email: faker.internet.email(),
-      password: faker.internet.password(),
+      password: await hash(faker.internet.password()),
       role: "student" as const,
     };
-  });
+  }));
 }
 
-function generateCourses(): { title: string, description: string }[] {
-  return Array.from({ length: COURSE_COUNT }, () => {
+async function generateCourses() {
+  return await Promise.all(Array.from({ length: COURSE_COUNT }, async () => {
     return {
       title: faker.lorem.words(4),
       description: faker.lorem.paragraph(),
     }
-  });
+  }));
 }
 
 async function seed() {
 
   console.log("😊 Starting seed...");
 
-  const usersData = generateUsers();
-  const coursesData = generateCourses();
+  const [usersData, coursesData] = await Promise.all([
+    generateUsers(),
+    generateCourses(),
+  ]);
 
   await db.transaction(async (tx) => {
     console.log("👥 Creating users and courses...");
