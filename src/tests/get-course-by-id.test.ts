@@ -5,6 +5,7 @@ import request from "supertest";
 //* Local imports
 import { app } from "../app.ts";
 import { makeCourse } from "./factories/make-course.ts";
+import { makeAuthenticatedUser } from "./factories/make-user.ts";
 
 describe("get a course by id", async () => {
 
@@ -14,11 +15,15 @@ describe("get a course by id", async () => {
     // first create a course
     const course = await makeCourse();
 
+    //* Make an authenticated user
+    const user = await makeAuthenticatedUser("student");
+
     //* Get the course by id
     const url = `/courses/${course.id}`;
     const getCourseByIdResponse = await request(app.server)
       .get(url)
-      .set("Content-Type", "application/json");
+      .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${user.token}`);
 
     expect(getCourseByIdResponse.status).toBe(200);
     expect(getCourseByIdResponse.body.id).toBe(course.id);
