@@ -5,11 +5,15 @@ import request from "supertest";
 
 //* Local imports
 import { app } from "../app.ts";
+import { makeAuthenticatedUser } from "./factories/make-user.ts";
 
 describe("create an course with valid data", async () => {
 
   it("should create an course with valid data", async () => {
     await app.ready();
+
+    //* Make an authenticated user
+    const user = await makeAuthenticatedUser("admin");
 
     //* Create a course
     const title = faker.lorem.sentence();
@@ -18,6 +22,7 @@ describe("create an course with valid data", async () => {
     const response = await request(app.server)
       .post(url)
       .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${user.token}`)
       .send({
         title,
         description
