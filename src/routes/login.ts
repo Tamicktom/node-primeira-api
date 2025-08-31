@@ -15,9 +15,20 @@ export const loginRoute: FastifyPluginAsyncZod = async (server) => {
       schema: {
         tags: ["sessions"],
         body: z.object({
-          email: z.string().email(),
+          email: z.email(),
           password: z.string(),
         }),
+        response: {
+          200: z.object({
+            token: z.string(),
+          }),
+          401: z.object({
+            message: z.string(),
+          }),
+          500: z.object({
+            message: z.string(),
+          }),
+        },
       }
     },
     async (request, reply) => {
@@ -26,8 +37,7 @@ export const loginRoute: FastifyPluginAsyncZod = async (server) => {
       const [user] = await db
         .select()
         .from(usersTable)
-        .where(eq(usersTable.email, email))
-        .limit(1);
+        .where(eq(usersTable.email, email));
 
       if (!user) {
         return reply.status(401).send({ message: "Invalid credentials" });
