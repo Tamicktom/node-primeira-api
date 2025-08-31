@@ -6,15 +6,17 @@ import { hash } from "argon2";
 import { db } from "./client.ts";
 import { usersTable, coursesTable, enrollmentsTable } from "./schema.ts";
 
-const USER_COUNT = 100;
+const USER_COUNT = 10;
 const COURSE_COUNT = 10;
+
+const DEFAULT_USER_PASSWORD = "123123";
 
 async function generateUsers() {
   return await Promise.all(Array.from({ length: USER_COUNT }, async () => {
     return {
       name: faker.person.fullName(),
       email: faker.internet.email(),
-      password: await hash(faker.internet.password()),
+      password: await hash(DEFAULT_USER_PASSWORD),
       role: "student" as const,
     };
   }));

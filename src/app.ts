@@ -8,6 +8,7 @@ import fastifyScalar from "@scalar/fastify-api-reference";
 import { getCourses } from './routes/get-courses.ts';
 import { createCourse } from './routes/create-course.ts';
 import { getCourseById } from './routes/get-course-by-id.ts';
+import { loginRoute } from './routes/login.ts';
 
 const app = fastify({
   logger: {
@@ -41,5 +42,6 @@ app.setSerializerCompiler(serializerCompiler);
 app.register(getCourses);
 app.register(createCourse);
 app.register(getCourseById);
+app.register(loginRoute);
 
 export { app };

@@ -23,5 +23,16 @@ Content-Type: application/json
   "description": ""
 }
 
-###
+### Get a course by id
 GET http://localhost:3333/courses/43e6f7d8-eeb9-482e-bfd0-ae53edd7c636
+
+### Login
+POST http://localhost:3333/sessions
+Content-Type: application/json
+
+{
+  "email": "Lorenzo53@gmail.com",
+  "password": "123123"
+}
+
+###
