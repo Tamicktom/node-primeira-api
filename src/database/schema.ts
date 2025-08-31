@@ -1,5 +1,7 @@
 //* Libraries imports
-import { pgTable, uuid, text, date, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, date, primaryKey, uniqueIndex, pgEnum } from "drizzle-orm/pg-core";
+
+export const rolesEnum = pgEnum("user_roles", ["admin", "student"]);
 
 export const usersTable = pgTable(
   "users",
@@ -11,6 +13,8 @@ export const usersTable = pgTable(
 
     createdAt: date().notNull().defaultNow(),
     updatedAt: date().notNull().defaultNow(),
+
+    role: rolesEnum().notNull().default("student"),
   }
 );
 
