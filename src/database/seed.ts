@@ -8,11 +8,13 @@ import { usersTable, coursesTable, enrollmentsTable } from "./schema.ts";
 const USER_COUNT = 100;
 const COURSE_COUNT = 10;
 
-function generateUsers(): { name: string, email: string }[] {
+function generateUsers(): { name: string, email: string, password: string, role: "student" | "admin" }[] {
   return Array.from({ length: USER_COUNT }, () => {
     return {
       name: faker.person.fullName(),
       email: faker.internet.email(),
+      password: faker.internet.password(),
+      role: "student" as const,
     };
   });
 }
